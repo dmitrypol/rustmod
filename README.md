@@ -1,1 +1,4 @@
-Code samples for https://www.meetup.com/seattle-valkey/events/301177195/
+Sample module demonstrating how to use https://github.com/valkey-io/valkeymodule-rs
+
+To run tests use `./test.sh` SDK readme for details on using `System.alloc`
+

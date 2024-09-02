@@ -1,0 +1,1 @@
+cargo build && cargo test --features enable-system-alloc
