@@ -1,4 +1,5 @@
 mod commands;
+mod data_types;
 
 #[macro_use]
 extern crate valkey_module;
@@ -24,8 +25,10 @@ valkey_module! {
     init: initialize,
     deinit: deinitialize,
     commands: [
-        ["rustmod.hello", hello, "", 0, 0, 0],
+        ["rustmod.hello", hello, "readonly", 0, 0, 0],
         ["rustmod.setget", setget, "write", 0, 0, 0],
         ["rustmod.setget2", setget2, "write", 0, 0, 0],
+        ["rustmod.myset", myset, "write", 0, 0, 0],
+        ["rustmod.myget", myget, "readonly", 0, 0, 0],
     ]
 }

@@ -1,3 +1,4 @@
+use crate::data_types::{MyDataType, MY_DATA_TYPE};
 use valkey_module::{Context, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue};
 
 pub(crate) fn hello(_ctx: &Context, _args: Vec<ValkeyString>) -> ValkeyResult {
@@ -41,4 +42,31 @@ pub(crate) fn setget2(ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
     });
     ctx.log_notice(&format!("resp: {:?}", resp));
     Ok(resp)
+}
+
+pub fn myset(ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    if args.len() != 3 {
+        return Err(ValkeyError::WrongArity);
+    }
+    let mut args = args.into_iter().skip(1);
+    let key = args.next_arg()?;
+    let value = args.next_arg()?;
+    let key2 = ctx.open_key_writable(&key);
+    let value2 = crate::data_types::MyDataType { data: value.into() };
+    key2.set_value(&MY_DATA_TYPE, value2)?;
+    Ok("OK".into())
+}
+
+pub fn myget(ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    if args.len() != 2 {
+        return Err(ValkeyError::WrongArity);
+    }
+    let mut args = args.into_iter().skip(1);
+    let key = args.next_arg()?;
+    let key2 = ctx.open_key(&key);
+    let value = match key2.get_value::<MyDataType>(&MY_DATA_TYPE)? {
+        Some(value) => value.data.as_str().into(),
+        None => ().into(),
+    };
+    Ok(value)
 }

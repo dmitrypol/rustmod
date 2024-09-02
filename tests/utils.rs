@@ -88,7 +88,7 @@ fn get_module_path() -> Result<String> {
     .collect();
 
     assert!(fs::metadata(&module_path)
-        .with_context(|| format!("Loading redis module: {}", module_path.display()))?
+        .with_context(|| format!("Loading valkey module: {}", module_path.display()))?
         .is_file());
 
     let module_path = format!("{}", module_path.display());

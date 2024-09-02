@@ -27,5 +27,19 @@ fn test_suite() -> Result<()> {
         .with_context(|| "failed to run setget2")?;
     assert_eq!(resp_setget2, "value2");
 
+    // test myset
+    let resp_myset: String = redis::cmd("rustmod.myset")
+        .arg(&["key3", "value3"])
+        .query(&mut con)
+        .with_context(|| "failed to run myset")?;
+    assert_eq!(resp_myset, "OK");
+
+    // test myget
+    let resp_myget: String = redis::cmd("rustmod.myget")
+        .arg(&["key3"])
+        .query(&mut con)
+        .with_context(|| "failed to run myget")?;
+    assert_eq!(resp_myget, "value3");
+
     Ok(())
 }
