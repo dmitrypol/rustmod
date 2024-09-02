@@ -9,6 +9,13 @@ edition = "2021"
 valkey-module = { path = "../valkeymodule-rs" }
 valkey-module-macros = {  path = "../valkeymodule-rs/valkeymodule-rs-macros" }
 anyhow = "1.0.86"
+linkme = "0.3.28"
+lazy_static = "1.5.0"
+chrono = "0.4.38"
+cron = "0.12.1"
+
+[dev-dependencies]
+redis = "0.26.1"
 
 [features]
 enable-system-alloc = ["valkey-module/enable-system-alloc"]
@@ -16,5 +23,3 @@ enable-system-alloc = ["valkey-module/enable-system-alloc"]
 [lib]
 crate-type = ["cdylib"]
 
-[dev-dependencies]
-redis = "0.26.1"

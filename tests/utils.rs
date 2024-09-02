@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::time::Duration;
 
-const VALKEY_PORT: &str = "6379";
+const VALKEY_PORT: &str = "1000";
 const MODULE_NAME: &str = "rustmod";
 
 /// Ensure child process is killed both on normal exit and when panicking due to a failed test.

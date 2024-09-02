@@ -1,5 +1,7 @@
 mod commands;
 mod data_types;
+mod event_handlers;
+mod my_cron;
 
 #[macro_use]
 extern crate valkey_module;
