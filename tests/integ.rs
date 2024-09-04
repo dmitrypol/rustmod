@@ -7,11 +7,31 @@ fn test_suite() -> Result<()> {
         vec![utils::start_valkey_server_with_module().with_context(|| "failed to start")?];
     let mut con = utils::get_valkey_connection().with_context(|| "failed to connect")?;
 
-    // test hello
+    // test hello - no args, default to world
     let resp_hello: String = redis::cmd("rustmod.hello")
         .query(&mut con)
         .with_context(|| "failed to run hello")?;
     assert_eq!(resp_hello, "world");
+
+    // test hello - specify arg
+    let resp_hello: String = redis::cmd("rustmod.hello")
+        .arg("foo")
+        .query(&mut con)
+        .with_context(|| "failed to run hello")?;
+    assert_eq!(resp_hello, "foo");
+
+    // test hello2
+    let resp_hello: String = redis::cmd("rustmod.hello2")
+        .query(&mut con)
+        .with_context(|| "failed to run hello2")?;
+    assert_eq!(resp_hello, "world");
+
+    // test hello3
+    let resp_hello: String = redis::cmd("rustmod.hello3")
+        .arg("foo")
+        .query(&mut con)
+        .with_context(|| "failed to run hello3")?;
+    assert_eq!(resp_hello, "foo");
 
     // test setget
     let resp_setget: String = redis::cmd("rustmod.setget")

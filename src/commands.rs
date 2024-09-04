@@ -1,8 +1,17 @@
 use crate::data_types::{MyDataType, MY_DATA_TYPE};
 use valkey_module::{Context, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue};
 
-pub(crate) fn hello(_ctx: &Context, _args: Vec<ValkeyString>) -> ValkeyResult {
-    Ok(ValkeyValue::SimpleStringStatic("world"))
+pub(crate) fn hello(_ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    let resp = if args.len() == 1 {
+        ValkeyValue::SimpleStringStatic("world")
+    } else {
+        ValkeyValue::SimpleStringStatic(args.into_iter().skip(1).next_str()?)
+    };
+    Ok(resp)
+}
+
+pub(crate) fn hello2(ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    hello(ctx, args)
 }
 
 /// using high level call to perform write and read

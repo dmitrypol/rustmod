@@ -28,6 +28,8 @@ valkey_module! {
     deinit: deinitialize,
     commands: [
         ["rustmod.hello", hello, "readonly", 0, 0, 0],
+        ["rustmod.hello2", hello2, "readonly", 0, 0, 0],
+        ["rustmod.hello3", hello, "readonly", 0, 0, 0],
         ["rustmod.setget", setget, "write", 0, 0, 0],
         ["rustmod.setget2", setget2, "write", 0, 0, 0],
         ["rustmod.myset", myset, "write", 0, 0, 0],
