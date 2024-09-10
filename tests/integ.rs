@@ -1,4 +1,6 @@
 use anyhow::{Context, Result};
+use redis::RedisError;
+
 mod utils;
 
 #[test]
@@ -60,6 +62,48 @@ fn test_suite() -> Result<()> {
         .query(&mut con)
         .with_context(|| "failed to run myget")?;
     assert_eq!(resp_myget, "value3");
+
+    // test config
+    // [bulk-string('"CONFIG_BOOL"'), int(0), bulk-string('"CONFIG_NUM"'), int(0), bulk-string('"CONFIG_STR"'), bulk-string('""')])
+    let resp_config: [String; 6] = redis::cmd("rustmod.config")
+        .query(&mut con)
+        .with_context(|| "failed to run config")?;
+    assert_eq!(resp_config.len(), 6);
+
+    // test set_metadata
+    let resp_set_metadata: String = redis::cmd("rustmod.set_metadata")
+        .arg(&["key1", "value1"])
+        .query(&mut con)
+        .with_context(|| "failed to run set_metadata")?;
+    assert_eq!(resp_set_metadata, "OK");
+
+    // test set_metadata WrongArity
+    let resp_set_metadata_no_args: Result<String, RedisError> =
+        redis::cmd("rustmod.set_metadata").query(&mut con);
+    if resp_set_metadata_no_args.is_err() {
+        assert_eq!(
+            resp_set_metadata_no_args.err().unwrap().to_string(),
+            "An error was signalled by the server - ResponseError: wrong number of arguments for 'rustmod.set_metadata' command"
+        );
+    }
+
+    // test get_metadata
+    // array([bulk-string('"key1"'), bulk-string('"value1"')])
+    let resp_get_metadata: [String; 2] = redis::cmd("rustmod.get_metadata")
+        .query(&mut con)
+        .with_context(|| "failed to run get_metadata")?;
+    assert_eq!(resp_get_metadata.len(), 2);
+
+    // test get_metadata WrongArity
+    let resp_get_metadata_w_args: Result<String, RedisError> = redis::cmd("rustmod.get_metadata")
+        .arg(&["invalid"])
+        .query(&mut con);
+    if resp_get_metadata_w_args.is_err() {
+        assert_eq!(
+            resp_get_metadata_w_args.err().unwrap().to_string(),
+            "An error was signalled by the server - ResponseError: wrong number of arguments for 'rustmod.get_metadata' command"
+        );
+    }
 
     Ok(())
 }

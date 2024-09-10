@@ -1,4 +1,7 @@
 use crate::data_types::{MyDataType, MY_DATA_TYPE};
+use crate::*;
+use std::collections::BTreeMap;
+use std::sync::atomic::Ordering::SeqCst;
 use valkey_module::{Context, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue};
 
 pub(crate) fn hello(_ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
@@ -80,4 +83,44 @@ pub(crate) fn myget(ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
         None => ().into(),
     };
     Ok(value)
+}
+
+pub(crate) fn config(_ctx: &Context, _args: Vec<ValkeyString>) -> ValkeyResult {
+    let mut output = BTreeMap::new();
+    unsafe {
+        output.insert(
+            "CONFIG_STR".into(),
+            CONFIG_STR.clone().unwrap_or_default().into(),
+        );
+        output.insert("CONFIG_BOOL".into(), CONFIG_BOOL.load(SeqCst).into());
+        output.insert("CONFIG_NUM".into(), CONFIG_NUM.load(SeqCst).into());
+    }
+    Ok(ValkeyValue::OrderedMap(output))
+}
+
+pub(crate) fn set_metadata(_ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    if args.len() != 3 {
+        return Err(ValkeyError::WrongArity);
+    }
+    let mut args = args.into_iter().skip(1);
+    let key = args.next_string()?;
+    let value = args.next_string()?;
+    unsafe {
+        let mut tmp = METADATA.clone().unwrap();
+        tmp.insert(key, value);
+        METADATA = Some(tmp);
+    }
+    Ok("OK".into())
+}
+
+pub(crate) fn get_metadata(_ctx: &Context, args: Vec<ValkeyString>) -> ValkeyResult {
+    if args.len() != 1 {
+        return Err(ValkeyError::WrongArity);
+    }
+    let metadata = unsafe { METADATA.as_ref().unwrap() };
+    let mut output = BTreeMap::new();
+    for (k, v) in metadata.iter() {
+        output.insert(k.clone(), v.clone());
+    }
+    Ok(output.into())
 }
