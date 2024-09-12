@@ -26,10 +26,10 @@ pub(crate) fn cron_event_handler(ctx: &Context) {
     }
 }
 
-fn foo(ctx: &Context) {
-    ctx.log_notice("foo");
+fn foo(_ctx: &Context) {
+    //ctx.log_notice("foo");
 }
 
-fn bar(ctx: &Context) {
-    ctx.log_notice("bar");
+fn bar(_ctx: &Context) {
+    //ctx.log_notice("bar");
 }
