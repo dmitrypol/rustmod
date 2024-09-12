@@ -10,6 +10,7 @@ fn loading_event_handler(ctx: &Context, _values: LoadingSubevent) {
 
 #[config_changed_event_handler]
 fn config_changed_event_handler(ctx: &Context, values: &[&str]) {
+    let _ = ctx.call("config", &["rewrite"]);
     ctx.log_notice(&format!("config_changed_event_handler: {:?}", values));
 }
 
